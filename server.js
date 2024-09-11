@@ -15,8 +15,9 @@ io.on('connection', (socket) => {
     players[socket.id] = { 
         playerName: Math.random() * 10 +"name",
     } 
-
-    socket.broadcast.emit('joinInRoom', players)
+    
+    socket.join('room1')
+    socket.in('room1').emit('joinInRoom', players)
 
 
     socket.on('updatePosition', (positionPlayerData) => {
@@ -26,13 +27,13 @@ io.on('connection', (socket) => {
             id: socket.id
         }
 
-        socket.broadcast.emit('receivePlayerPosition', players[socket.id])
+        socket.to('room1').emit('receivePlayerPosition', players[socket.id])
     })
 
    
     socket.on('disconnect', () => {
         console.log('Usuário disconectado');
-        socket.emit('exitTheRoom', socket.id)
+        socket.to('room1').emit('exitTheRoom', socket.id)
         delete players[socket.id]
     });
 
